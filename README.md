@@ -28,28 +28,28 @@ chmod +x rl_enable.sh
 
 ###Requirements
 
--    Deployment Name
+-    Deployment Name **(-d)**
   
   The name of the deployment where you'd like the serves to be placed.
 
--   Server Template Name
+-   Server Template Name **(-s)**
 
-  The name of the ServerTemplate you would like associated with this server.
+  The name of the ServerTemplate you would like associated with this server. 
 
--   Refresh Token
+-   Refresh Token **(-t)**
 
   This token can be found by login into the cloud management dashboard at (http://my.rightscale.com) Click on Settings then API Credentials
 
--   Cloud
+-   Cloud **(-c)**
 
   The cloud we should reference for this server (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
                 rackspace_next_gen, soft_layer, vscale )
 
 -   Authentication
    options
-    - ssh key
-    - password
-    - no key or pass (managed on your computer via keyagent)
+    - ssh key **(-k)**
+    - password **(-p)**
+    - no key or pass (managed on your computer via ssh-agent)
 
 -   List of servers
     - You will need to provide the script a file with the list of servers to rightlink enable.
@@ -68,5 +68,6 @@ backend.domain.com
 
 
 ##Example 
-```./rl_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'```
+``` shell
+./rl_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'
 
