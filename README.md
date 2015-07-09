@@ -21,7 +21,7 @@ Usage:
 
 ##Download and use
 ```
-wget https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/rl_enable.sh
+wget https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/rl_bulk_enable.sh
 chmod +x rl_enable.sh
 ./rl_enable.sh -h
 ```
@@ -29,12 +29,12 @@ chmod +x rl_enable.sh
 ###Requirements
 
 -    Deployment Name **(-d)**
-  
+
   The name of the deployment where you'd like the serves to be placed.
 
 -   Server Template Name **(-s)**
 
-  The name of the ServerTemplate you would like associated with this server. 
+  The name of the ServerTemplate you would like associated with this server.
 
 -   Refresh Token **(-t)**
 
@@ -67,7 +67,6 @@ backend.domain.com
 
 
 
-##Example 
+##Example
 ``` shell
 ./rl_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'
-
