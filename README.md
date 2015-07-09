@@ -4,18 +4,18 @@ Install RightLink 10 on a group of servers. Uses ssh keys or password to access 
 ##Options
 ```
 Usage:
--  -u user to access servers
--  -p password to use when authenticating with a password
--  -k ssh private key to use when authenticating with keys
--  -f file with hostnames or ips
--  -d deployment where servers will the grouped
--  -n server name prefix
--  -m enable managed logins
--  -s server template name to associate the enaled server
--  -t rightscale API refresh token (Settings>API Credentials)
--  -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
--                rackspace_next_gen, soft_layer, vscale )
--  -h show help information
+  -u user to access servers
+  -p password to use when authenticating with a password
+  -k ssh private key to use when authenticating with keys
+  -f file with hostnames or ips
+  -d deployment where servers will the grouped
+  -n server name prefix
+  -m enable managed logins
+  -s server template name to associate the enaled server
+  -t rightscale API refresh token (Settings>API Credentials)
+  -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
+                rackspace_next_gen, soft_layer, vscale )
+  -h show help information
 ```
 
 
@@ -39,10 +39,12 @@ chmod +x rl_enable.sh
 -   Refresh Token
 
   This token can be found by login into the cloud management dashboard at (http://my.rightscale.com) Click on Settings then API Credentials
+
 -   Cloud
 
   The cloud we should reference for this server (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
                 rackspace_next_gen, soft_layer, vscale )
+
 -   Authentication
    options
     - ssh key
@@ -50,11 +52,10 @@ chmod +x rl_enable.sh
     - no key or pass (managed on your computer via keyagent)
 
 -   List of servers
+    - You will need to provide the script a file with the list of servers to rightlink enable.
 
+    example file called server.txt
 
-You will need to provide the script a file with the list of servers to rightlink enable.
-
-servers.txt
 ```
 10.10.12.1
 10.10.14.3
@@ -67,5 +68,5 @@ backend.domain.com
 
 
 ##Example 
-
+```./rl_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'```
 
