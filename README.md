@@ -64,9 +64,22 @@ database.domain.com
 backend.domain.com
 ```
 
-
-
-
 ##Example
 ``` shell
-./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'
+./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' 
+```
+
+##Logging 
+All logging information is stored in the rightscale_rl10 directory on the computer from where the script is being executed.
+We will keep logs of failed attempts in the following format.
+``` 1.2.3.4--failed-rl.log ```
+
+We will also create a file with the ips/hostname of the failed instances so that you easily re-run the script using the new list of host as the server file.
+
+```failed_enablement_process.2015-07-13_15-44-56.txt ```
+
+```./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f rightscale_r10/failed_enablement_process.2015-07-13_15-44-56.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' ```
+
+
+
+
