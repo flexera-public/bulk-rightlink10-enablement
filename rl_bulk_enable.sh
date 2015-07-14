@@ -140,13 +140,7 @@ for server in `cat $RS_HOSTS_FILE` ; do
     #check if the file already exists, previous attempts
     [[ -f 'rightlink.enable.sh' ]] && rm 'rightlink.enable.sh'
 
-    #get the latest enable script
-    #add logic if curl -h doesn't return 0, try wget.
-    curl https://rightlink.rightscale.com/rll/10.1.3/rightlink.enable.sh > rightlink.enable.sh && chmod +x rightlink.enable.sh && \
-
-    #wget https://rightlink.rightscale.com/rll/10.1.3/rightlink.enable.sh && chmod +x rightlink.enable.sh  \
-
-    #run the enable script
+    curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.enable.sh > rightlink.enable.sh && chmod +x rightlink.enable.sh && \
 
     #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
     sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN $RS_SERVER_NAME -k  "\'$RS_API_TOKEN\'" -t "\'$RS_SERVER_TEMPLATE_NAME\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
