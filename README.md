@@ -81,5 +81,6 @@ We will also create a file with the ips/hostname of the failed instances so that
 ```./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f rightscale_r10/failed_enablement_process.2015-07-13_15-44-56.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' ```
 
 
-
+**Note:** 
+On clouds that support stop/start, instances only currently support starting the instance from either the RightScale Dashboard or through the API.
 
