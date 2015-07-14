@@ -110,19 +110,26 @@ if [[ -z "$RS_SSH_USER" ]]; then
   exit 1
 fi
 
+#randomize name to RightLink Enable #random (to be fixed in later release)
+#disable RL opton for group of servers. 
+
+
+
+
 #check for server name option
 if [ ! -z "$RS_SERVER_NAME" ]; then
   RS_SERVER_NAME="-n $RS_SERVER_NAME"
   echo "$RS_SERVER_NAME"
 fi
 
+
 #build ssh command
 if [ ! -z "$SSHPASS" ]; then
-  SSH_CMD="sshpass -e ssh -tt -o StrictHostKeyChecking=no $RS_SSH_USER"
+  SSH_CMD="sshpass -e ssh -tt -o StrictHostKeyChecking=no -o LogLevel=ERROR $RS_SSH_USER"
 elif [ ! -z "$SSH_KEY_FILE" ]; then
-  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no -i $SSH_KEY_FILE $RS_SSH_USER"
+  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no  -o LogLevel=ERROR -i $SSH_KEY_FILE $RS_SSH_USER"
 else
-  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no $RS_SSH_USER"
+  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no -o LogLevel=ERROR $RS_SSH_USER"
 fi
 
 #for debugging - (REMOVE ME)
@@ -130,8 +137,6 @@ echo $SSH_CMD
 
 
 for server in `cat $RS_HOSTS_FILE` ; do
-
-
 
     ( {
 
@@ -152,11 +157,13 @@ for server in `cat $RS_HOSTS_FILE` ; do
  done
  wait
 
- #Report Status of each server
- RED='\033[0;31m' # Red
- GREEN='\033[0;32m' # Green
- NC='\033[0m' # No Color
+#Report Status of each server
+RED='\033[0;31m' # Red
+GREEN='\033[0;32m' # Green
+NC='\033[0m' # No Color
 TIMESTAMP=`date +"%Y-%m-%d_%H-%M-%S"`
+
+
  for server in `cat $RS_HOSTS_FILE` ; do
 
   #  grep "Enablement complete." $RL10_WORKING_DIR/$server-rl.log
@@ -181,4 +188,5 @@ echo "A list of failed server can be found here $RL10_WORKING_DIR/failed_enablem
 echo "A log file for each failed server is included in $RL10_WORKING_DIR"
 echo "#####################################################################################################"
 echo "#####################################################################################################"
+echo " "
 fi
