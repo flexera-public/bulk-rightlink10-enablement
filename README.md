@@ -68,6 +68,11 @@ backend.domain.com
 ``` shell
 ./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' 
 ```
+**Output**
+
+![Alt text](/../master/output.png?raw=true "Optional Title")
+
+
 
 ##Logging 
 All logging information is stored in the rightscale_rl10 directory on the computer from where the script is being executed.
