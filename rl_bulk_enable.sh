@@ -36,12 +36,13 @@ function show_help
      echo "  -t rightscale API refresh token (Settings>API Credentials)"
      echo "  -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
                 rackspace_next_gen, soft_layer, vscale )"
+     echo "  -D disable rightlink requires (-t refresh api token)"
      echo "  -h show help information"
      echo ""
 }
 
 
-while getopts ":u:p:k:f:d:n:ms:t:c:h" opt; do
+while getopts ":u:p:k:f:d:n:ms:t:c:hD" opt; do
   case $opt in
     # User to ssh as
     u)
@@ -83,6 +84,10 @@ while getopts ":u:p:k:f:d:n:ms:t:c:h" opt; do
     c)
     export RS_CLOUD=$OPTARG
     ;;
+    #disable rightlink
+    D)
+    export DISABLE=true
+    ;;
     # help
     h)
     show_help;exit 0;
@@ -111,25 +116,23 @@ if [[ -z "$RS_SSH_USER" ]]; then
 fi
 
 #randomize name to RightLink Enable #random (to be fixed in later release)
-#disable RL opton for group of servers. 
-
-
+#disable RL opton for group of servers.
 
 
 #check for server name option
-if [ ! -z "$RS_SERVER_NAME" ]; then
-  RS_SERVER_NAME="-n $RS_SERVER_NAME"
+if [ -z "$RS_SERVER_NAME" ]; then
+  RS_SERVER_NAME="RightLink Enabled"
   echo "$RS_SERVER_NAME"
 fi
 
 
 #build ssh command
 if [ ! -z "$SSHPASS" ]; then
-  SSH_CMD="sshpass -e ssh -tt -o StrictHostKeyChecking=no -o LogLevel=ERROR $RS_SSH_USER"
+  SSH_CMD="sshpass -e ssh -tt -o StrictHostKeyChecking=no $RS_SSH_USER"
 elif [ ! -z "$SSH_KEY_FILE" ]; then
-  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no  -o LogLevel=ERROR -i $SSH_KEY_FILE $RS_SSH_USER"
+  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no -i $SSH_KEY_FILE $RS_SSH_USER"
 else
-  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no -o LogLevel=ERROR $RS_SSH_USER"
+  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no $RS_SSH_USER"
 fi
 
 #for debugging - (REMOVE ME)
@@ -140,7 +143,8 @@ for server in `cat $RS_HOSTS_FILE` ; do
 
     ( {
 
-    echo "output from $server:" ; $SSH_CMD@$server " \
+    echo "Output from $server:" ; $SSH_CMD@$server " \
+
 
     #check if the file already exists, previous attempts
     [[ -f 'rightlink.enable.sh' ]] && rm 'rightlink.enable.sh'
@@ -148,9 +152,11 @@ for server in `cat $RS_HOSTS_FILE` ; do
     curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.enable.sh > rightlink.enable.sh && chmod +x rightlink.enable.sh && \
 
     #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
-    sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN $RS_SERVER_NAME -k  "\'$RS_API_TOKEN\'" -t "\'$RS_SERVER_TEMPLATE_NAME\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
-    " ; } | \
-    sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log"
+    sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -t "\'$RS_SERVER_TEMPLATE_NAME\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
+    " ; }
+    #fix logging issue here.
+    #| \
+    #sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log"
 
     ) &
 
@@ -162,7 +168,6 @@ RED='\033[0;31m' # Red
 GREEN='\033[0;32m' # Green
 NC='\033[0m' # No Color
 TIMESTAMP=`date +"%Y-%m-%d_%H-%M-%S"`
-
 
  for server in `cat $RS_HOSTS_FILE` ; do
 
