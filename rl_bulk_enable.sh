@@ -141,8 +141,27 @@ echo $SSH_CMD
 
 for server in `cat $RS_HOSTS_FILE` ; do
 
-    ( {
+    # ?( {
 
+    if [[ "$DISABLE" == 'true' ]];then
+      {
+      (
+      echo "Output from $server:" ; $SSH_CMD@$server " \
+
+
+      #check if the file already exists, previous attempts
+      [[ -f 'rightlink.disable.sh' ]] && rm 'rightlink.disable.sh'
+
+      curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.disable.sh > rightlink.disable.sh && chmod +x rightlink.disable.sh && \
+
+      #Disable server -s is not needed it will used data that's on the server. (-f auto confirm the disablment prompt)
+      sudo ./rightlink.disable.sh -k  "\'$RS_API_TOKEN\'" -f
+      ";
+      ) | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
+      }
+    else
+    {
+    (
     echo "Output from $server:" ; $SSH_CMD@$server " \
 
 
@@ -153,12 +172,16 @@ for server in `cat $RS_HOSTS_FILE` ; do
 
     #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
     sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -t "\'$RS_SERVER_TEMPLATE_NAME\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
-    " ; }
+    ";
+    ) | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
+    }
+    fi
+
     #fix logging issue here.
     #| \
     #sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log"
 
-    ) &
+    #})
 
  done
  wait
@@ -171,14 +194,20 @@ TIMESTAMP=`date +"%Y-%m-%d_%H-%M-%S"`
 
  for server in `cat $RS_HOSTS_FILE` ; do
 
+          if [[ "$DISABLE" == 'true' ]];then
+            DETECTION_STRING='Disablement'
+          else
+            DETECTION_STRING='Enablement'
+          fi
+
   #  grep "Enablement complete." $RL10_WORKING_DIR/$server-rl.log
-     if grep -Fq 'Enablement complete.' "$RL10_WORKING_DIR/$server-rl.log"; then
-       printf "$server: Rightlink Enablement ${GREEN} [OK] ${NC}\n";
+     if grep -Fq "$DETECTION_STRING complete." "$RL10_WORKING_DIR/$server-rl.log"; then
+       printf "$server: Rightlink $DETECTION_STRING ${GREEN} [OK] ${NC}\n";
      else
-       printf "$server: Rightlink Enablement ${RED} [FAILED] ${NC}\n";
+       printf "$server: Rightlink $DETECTION_STRING ${RED} [FAILED] ${NC}\n";
        HAS_FAILED='true'
-       echo $server >> "$RL10_WORKING_DIR/failed_enablement_process.$TIMESTAMP.txt"
-       mv "$RL10_WORKING_DIR/$server-rl.log" "$RL10_WORKING_DIR/$server--failed-rl.log"
+       echo $server >> "$RL10_WORKING_DIR/failed_$DETECTION_STRING.$TIMESTAMP.txt"
+       mv "$RL10_WORKING_DIR/$server-rl.log" "$RL10_WORKING_DIR/$server-failed-rl.log"
      fi
 
      #clean up logs for another run.
@@ -186,12 +215,12 @@ TIMESTAMP=`date +"%Y-%m-%d_%H-%M-%S"`
 
 done
 
-if [ "$HAS_FAILED" == 'true' ]; then
-
-echo "#####################################################################################################"
-echo "A list of failed server can be found here $RL10_WORKING_DIR/failed_enablement_process.$TIMESTAMP.txt"
-echo "A log file for each failed server is included in $RL10_WORKING_DIR"
-echo "#####################################################################################################"
-echo "#####################################################################################################"
-echo " "
-fi
+# if [ "$HAS_FAILED" == 'true' ]; then
+#
+# echo "#####################################################################################################"
+# echo "A list of failed server can be found here $RL10_WORKING_DIR/failed_$DETECTION_STRING.$TIMESTAMP.txt"
+# echo "A log file for each failed server is included in $RL10_WORKING_DIR"
+# echo "#####################################################################################################"
+# echo "#####################################################################################################"
+# echo " "
+# fi
