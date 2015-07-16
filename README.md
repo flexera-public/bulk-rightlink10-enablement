@@ -9,7 +9,7 @@ Usage:
   -k ssh private key to use when authenticating with keys
   -f file with hostnames or ips
   -d deployment where servers will the grouped
-  -n server name prefix
+  -n server name
   -m enable managed logins
   -s server template name to associate the enaled server
   -t rightscale API refresh token (Settings>API Credentials)
