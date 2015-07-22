@@ -15,6 +15,7 @@ Usage:
   -t rightscale API refresh token (Settings>API Credentials)
   -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
                 rackspace_next_gen, soft_layer, vscale )
+  -D disable rightlink requires (-t refresh api token, -u username, -f file with ips/hostnames)"
   -h show help information
 ```
 
@@ -64,17 +65,21 @@ database.domain.com
 backend.domain.com
 ```
 
-##Example
+##Example Enablement
 ``` shell
-./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' 
+./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'
 ```
 **Output**
 
 ![Alt text](/../master/output.png?raw=true "Optional Title")
 
 
+##Example Disablement
+``` shell
+./rl_bulk_enable.sh -u ec2-user -k ~/stash/edwin-aws.pem -D -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -f servers.txt
+```
 
-##Logging 
+##Logging
 All logging information is stored in the rightscale_rl10 directory on the computer from where the script is being executed.
 We will keep logs of failed attempts in the following format.
 ``` 1.2.3.4--failed-rl.log ```
@@ -86,6 +91,5 @@ We will also create a file with the ips/hostname of the failed instances so that
 ```./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f rightscale_r10/failed_enablement_process.2015-07-13_15-44-56.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' ```
 
 
-**Note:** 
+**Note:**
 On clouds that support stop/start, instances only currently support starting the instance from either the RightScale Dashboard or through the API.
-
