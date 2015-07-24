@@ -33,7 +33,7 @@ function show_help
      echo "  -d deployment where servers will the grouped"
      echo "  -n server name prefix"
      echo "  -m enable managed logins"
-     echo "  -s server template name to associate the enaled server"
+     echo "  -s the server template href (/api/server_templates/355861004)"
      echo "  -t rightscale API refresh token (Settings>API Credentials)"
      echo "  -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
                 rackspace_next_gen, soft_layer, vscale )"
@@ -75,7 +75,7 @@ while getopts ":u:p:k:f:d:n:ms:t:c:hD" opt; do
     ;;
     #Server template name to use on enabled vms
     s)
-    export RS_SERVER_TEMPLATE_NAME=$OPTARG
+    export RS_SERVER_TEMPLATE_HREF=$OPTARG
     ;;
     #rightscale api refresh token
     t)
@@ -176,7 +176,7 @@ for server in `cat $RS_HOSTS_FILE` ; do
       # Prompt user for confirmation
       echo ""
       echo "Number of Servers to be enabled: $NUM_SERVERS"
-      echo "ServerTemplate to be associated with server: $RS_SERVER_TEMPLATE_NAME"
+      echo "ServerTemplate to be associated with server: $RS_SERVER_TEMPLATE_HREF"
       echo ""
       read -r -p "Do you want to proceed? [y/N] " response </dev/tty
 
@@ -196,7 +196,7 @@ for server in `cat $RS_HOSTS_FILE` ; do
     curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.enable.sh > rightlink.enable.sh && chmod +x rightlink.enable.sh && \
 
     #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
-    sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -t "\'$RS_SERVER_TEMPLATE_NAME\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
+    sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -r "\'$RS_SERVER_TEMPLATE_HREF\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
     ";
     2>> "$RL10_WORKING_DIR/$server-rl.log" )  &
     #sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
