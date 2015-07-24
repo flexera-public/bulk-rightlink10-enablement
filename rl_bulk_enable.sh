@@ -136,6 +136,34 @@ fi
 #prompt for confirmation of bulk action.
 NUM_SERVERS=`wc -l < $RS_HOSTS_FILE`
 
+# Prompt user for confirmation
+if [[ "$DISABLE" == 'true' ]];then
+    echo ""
+    echo "Number of Servers to be disabled: $NUM_SERVERS"
+    echo ""
+    read -r -p "Do you want to proceed? [y/N] " response </dev/tty
+
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    echo "Continuing with disablement"
+    else
+    echo "Aborted disablement process"
+    exit 1
+    fi
+else 
+    # Prompt user for confirmation
+    echo ""
+    echo "Number of Servers to be enabled: $NUM_SERVERS"
+    echo "ServerTemplate to be associated with server: $RS_SERVER_TEMPLATE_HREF"
+    echo ""
+    read -r -p "Do you want to proceed? [y/N] " response </dev/tty
+
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      echo "Continuing with enablement"
+    else
+      echo "Aborted enablement process"
+      exit 1
+    fi
+fi
 
 
 for server in `cat $RS_HOSTS_FILE` ; do
@@ -144,18 +172,6 @@ for server in `cat $RS_HOSTS_FILE` ; do
 
     if [[ "$DISABLE" == 'true' ]];then
       {
-        # Prompt user for confirmation
-        echo ""
-        echo "Number of Servers to be disabled: $NUM_SERVERS"
-        echo ""
-        read -r -p "Do you want to proceed? [y/N] " response </dev/tty
-
-        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-          echo "Continuing with disablement"
-        else
-          echo "Aborted disablement process"
-          exit 1
-        fi
       (
       echo "Output from $server:" ; $SSH_CMD@$server " \
 
@@ -172,20 +188,6 @@ for server in `cat $RS_HOSTS_FILE` ; do
       }
     else
     {
-
-      # Prompt user for confirmation
-      echo ""
-      echo "Number of Servers to be enabled: $NUM_SERVERS"
-      echo "ServerTemplate to be associated with server: $RS_SERVER_TEMPLATE_HREF"
-      echo ""
-      read -r -p "Do you want to proceed? [y/N] " response </dev/tty
-
-      if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-        echo "Continuing with enablement"
-      else
-        echo "Aborted enablement process"
-        exit 1
-      fi
     (
     echo "Output from $server:" ; $SSH_CMD@$server " \
 
