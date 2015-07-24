@@ -1,10 +1,11 @@
 #!/bin/bash
+#Script documentation can me found here
+#https://github.com/rs-services/bulk-rightlink10-enablement
 #Script to be used to enable running servers.
-#It will execute the rightscale.enable.sh script
-#https://rightlink.rightscale.com/rll/10.1.3/rightlink.enable.sh
+#It will execute the rightscale.enable.sh or rightscript.disable.sh script
+#https://rightlink.rightscale.com/rll/10.1.4/rightlink.enable.sh
 #on all listed servers.
-#
-#
+
 
 #local working directory
 RL10_WORKING_DIR='rightscale_rl10'
@@ -37,7 +38,7 @@ function show_help
      echo "  -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
                 rackspace_next_gen, soft_layer, vscale )"
      echo "  -D disable rightlink requires (-t refresh api token)"
-     echo "  -h show help information"
+     echo "  -h show help information (documentation can be found here: https://github.com/rs-services/bulk-rightlink10-enablement)"
      echo ""
 }
 
@@ -100,8 +101,6 @@ done
 #Create a working directory for the script and storing logs for each host (rightscale_rl10_script)
 if [ ! -d "$RL10_WORKING_DIR" ]; then
   mkdir $RL10_WORKING_DIR
-else
-  echo "Working directory $RL10_WORKING_DIR exists . . . continue"
 fi
 
 #Generate SSH command options
@@ -122,7 +121,6 @@ fi
 #check for server name option
 if [ -z "$RS_SERVER_NAME" ]; then
   RS_SERVER_NAME="RightLink Enabled"
-  echo "$RS_SERVER_NAME"
 fi
 
 
@@ -135,8 +133,9 @@ else
   SSH_CMD="ssh -tt -o StrictHostKeyChecking=no $RS_SSH_USER"
 fi
 
-#for debugging - (REMOVE ME)
-echo $SSH_CMD
+#prompt for confirmation of bulk action.
+NUM_SERVERS=`wc -l < $RS_HOSTS_FILE`
+
 
 
 for server in `cat $RS_HOSTS_FILE` ; do
@@ -145,6 +144,18 @@ for server in `cat $RS_HOSTS_FILE` ; do
 
     if [[ "$DISABLE" == 'true' ]];then
       {
+        # Prompt user for confirmation
+        echo ""
+        echo "Number of Servers to be disabled: $NUM_SERVERS"
+        echo ""
+        read -r -p "Do you want to proceed? [y/N] " response </dev/tty
+
+        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+          echo "Continuing with disablement"
+        else
+          echo "Aborted disablement process"
+          exit 1
+        fi
       (
       echo "Output from $server:" ; $SSH_CMD@$server " \
 
@@ -161,6 +172,20 @@ for server in `cat $RS_HOSTS_FILE` ; do
       }
     else
     {
+
+      # Prompt user for confirmation
+      echo ""
+      echo "Number of Servers to be enabled: $NUM_SERVERS"
+      echo "ServerTemplate to be associated with server: $RS_SERVER_TEMPLATE_NAME"
+      echo ""
+      read -r -p "Do you want to proceed? [y/N] " response </dev/tty
+
+      if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "Continuing with enablement"
+      else
+        echo "Aborted enablement process"
+        exit 1
+      fi
     (
     echo "Output from $server:" ; $SSH_CMD@$server " \
 
@@ -173,7 +198,8 @@ for server in `cat $RS_HOSTS_FILE` ; do
     #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
     sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -t "\'$RS_SERVER_TEMPLATE_NAME\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
     ";
-    ) | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
+    2>> "$RL10_WORKING_DIR/$server-rl.log" )  &
+    #sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
     }
     fi
 
