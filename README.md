@@ -4,27 +4,36 @@ Install RightLink 10 on a group of servers. Uses ssh keys or password to access 
 ##Options
 ```
 Usage:
-  -u user to access servers
-  -p password to use when authenticating with a password
-  -k ssh private key to use when authenticating with keys
-  -f file with hostnames or ips
-  -d deployment where servers will the grouped
-  -n server name
-  -m enable managed logins
-  -s server template name to associate the enaled server
-  -t rightscale API refresh token (Settings>API Credentials)
-  -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
-                rackspace_next_gen, soft_layer, vscale )
+  -u The user used to SSH into the server
+  -p The password used when SSH authenticates with a password
+  -k The ssh private key to use when SSH authenticates with keys
+  -f The file listing the hostnames or ips to bulk enable
+  -d The deployment where enabled servers will the grouped within RightScale
+  -n The name given to the server within RightScale
+  -m Pass this flag to enable RightScale managed logins
+  -s The server template href to associate the enaled server (e.g. /api/server_templates/355861004)
+  -t The rightscale API refresh token (Settings>API Credentials)
+  -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2, rackspace_next_gen, soft_layer, vscale)
   -D disable rightlink requires (-t refresh api token, -u username, -f file with ips/hostnames)"
-  -h show help information
+  -h show help information (documentation can be found here: https://github.com/rs-services/bulk-rightlink10-enablement)
 ```
+##Warning
+This command automates the enablement of your infrastructure into the RightScale platform.
+It's highly recommended that you read and understand the following documentation prior running this script.
+- RL10 documentation
+http://docs.rightscale.com/rl/getting_started.html
+- ServerTemplate documentation
+http://support.rightscale.com/12-Guides/Dashboard_Users_Guide/Design/ServerTemplates/Concepts/About_ServerTemplates/index.html
 
+##Prerequisites
+1. Import the base RL10 ST
+[LINK]
 
 ##Download and use
 ```
 wget https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/rl_bulk_enable.sh
 chmod +x rl_enable.sh
-./rl_enable.sh -h
+./rl_bulk_enable.sh -h
 ```
 
 ###Requirements
