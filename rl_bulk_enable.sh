@@ -1,10 +1,11 @@
 #!/bin/bash
+#Script documentation can me found here
+#https://github.com/rs-services/bulk-rightlink10-enablement
 #Script to be used to enable running servers.
-#It will execute the rightscale.enable.sh script
-#https://rightlink.rightscale.com/rll/10.1.3/rightlink.enable.sh
+#It will execute the rightscale.enable.sh or rightscript.disable.sh script
+#https://rightlink.rightscale.com/rll/10.1.4/rightlink.enable.sh
 #on all listed servers.
-#
-#
+
 
 #local working directory
 RL10_WORKING_DIR='rightscale_rl10'
@@ -74,7 +75,7 @@ while getopts ":u:p:k:f:d:n:ms:t:c:hD" opt; do
     ;;
     #Server template name to use on enabled vms
     s)
-    export RS_SERVER_TEMPLATE_NAME=$OPTARG
+    export RS_SERVER_TEMPLATE_HREF=$OPTARG
     ;;
     #rightscale api refresh token
     t)
@@ -100,8 +101,6 @@ done
 #Create a working directory for the script and storing logs for each host (rightscale_rl10_script)
 if [ ! -d "$RL10_WORKING_DIR" ]; then
   mkdir $RL10_WORKING_DIR
-else
-  echo "Working directory $RL10_WORKING_DIR exists . . . continue"
 fi
 
 #Generate SSH command options
@@ -122,21 +121,49 @@ fi
 #check for server name option
 if [ -z "$RS_SERVER_NAME" ]; then
   RS_SERVER_NAME="RightLink Enabled"
-  echo "$RS_SERVER_NAME"
 fi
 
 
 #build ssh command
 if [ ! -z "$SSHPASS" ]; then
-  SSH_CMD="sshpass -e ssh -tt -o StrictHostKeyChecking=no $RS_SSH_USER"
+  SSH_CMD="sshpass -e ssh -tt -o StrictHostKeyChecking=no -o ConnectTimeout=10 $RS_SSH_USER"
 elif [ ! -z "$SSH_KEY_FILE" ]; then
-  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no -i $SSH_KEY_FILE $RS_SSH_USER"
+  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i $SSH_KEY_FILE $RS_SSH_USER"
 else
-  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no $RS_SSH_USER"
+  SSH_CMD="ssh -tt -o StrictHostKeyChecking=no -o ConnectTimeout=10 $RS_SSH_USER"
 fi
 
-#for debugging - (REMOVE ME)
-echo $SSH_CMD
+#prompt for confirmation of bulk action.
+NUM_SERVERS=`wc -l < $RS_HOSTS_FILE`
+
+# Prompt user for confirmation
+if [[ "$DISABLE" == 'true' ]];then
+    echo ""
+    echo "Number of Servers to be disabled: $NUM_SERVERS"
+    echo ""
+    read -r -p "Do you want to proceed? [y/N] " response </dev/tty
+
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    echo "Continuing with disablement"
+    else
+    echo "Aborted disablement process"
+    exit 1
+    fi
+else
+    # Prompt user for confirmation
+    echo ""
+    echo "Number of Servers to be enabled: $NUM_SERVERS"
+    echo "ServerTemplate to be associated with server: $RS_SERVER_TEMPLATE_HREF"
+    echo ""
+    read -r -p "Do you want to proceed? [y/N] " response </dev/tty
+
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      echo "Continuing with enablement"
+    else
+      echo "Aborted enablement process"
+      exit 1
+    fi
+fi
 
 
 for server in `cat $RS_HOSTS_FILE` ; do
@@ -146,34 +173,33 @@ for server in `cat $RS_HOSTS_FILE` ; do
     if [[ "$DISABLE" == 'true' ]];then
       {
       (
-      echo "Output from $server:" ; $SSH_CMD@$server " \
+          echo "Output from $server:" ; $SSH_CMD@$server " \
 
+          #check if the file already exists, previous attempts
+          [[ -f 'rightlink.disable.sh' ]] && rm 'rightlink.disable.sh'
 
-      #check if the file already exists, previous attempts
-      [[ -f 'rightlink.disable.sh' ]] && rm 'rightlink.disable.sh'
+          curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.disable.sh > rightlink.disable.sh && chmod +x rightlink.disable.sh && \
 
-      curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.disable.sh > rightlink.disable.sh && chmod +x rightlink.disable.sh && \
-
-      #Disable server -s is not needed it will used data that's on the server. (-f auto confirm the disablment prompt)
-      sudo ./rightlink.disable.sh -k  "\'$RS_API_TOKEN\'" -f
-      ";
-      ) | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
+          #Disable server -s is not needed it will used data that's on the server. (-f auto confirm the disablment prompt)
+          sudo ./rightlink.disable.sh -k  "\'$RS_API_TOKEN\'" -f
+          ";
+          ) | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
       }
     else
     {
     (
-    echo "Output from $server:" ; $SSH_CMD@$server " \
+          echo "Output from $server:" ; $SSH_CMD@$server " \
 
+          #check if the file already exists, previous attempts
+          [[ -f 'rightlink.enable.sh' ]] && rm 'rightlink.enable.sh'
 
-    #check if the file already exists, previous attempts
-    [[ -f 'rightlink.enable.sh' ]] && rm 'rightlink.enable.sh'
+          curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.enable.sh > rightlink.enable.sh && chmod +x rightlink.enable.sh && \
 
-    curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.enable.sh > rightlink.enable.sh && chmod +x rightlink.enable.sh && \
+          #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
+          sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -r "\'$RS_SERVER_TEMPLATE_HREF\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
+          ";
+          ) | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
 
-    #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
-    sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -t "\'$RS_SERVER_TEMPLATE_NAME\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
-    ";
-    ) | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
     }
     fi
 
