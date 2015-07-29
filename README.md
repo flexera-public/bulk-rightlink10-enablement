@@ -28,7 +28,7 @@ http://support.rightscale.com/12-Guides/Dashboard_Users_Guide/Design/ServerTempl
 ##Prerequisites
 
 1. Import the base RL10 Bulk ST
-[RightLink 10 Bulk ServerTemplate](https://my.rightscale.com/library/server_templates/RightLink-10-1-4-Bulk-Linux-Ba/lineage/55261) 
+[RightLink 10 Bulk ServerTemplate](https://my.rightscale.com/library/server_templates/RightLink-10-1-4-Bulk-Linux-Ba/lineage/55261)
 
 
 
@@ -79,7 +79,7 @@ backend.domain.com
 
 ##Example Enablement
 ``` shell
-./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'
+./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s '/api/server_templates/362953003' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'
 ```
 **Output**
 
@@ -100,7 +100,7 @@ We will also create a file with the ips/hostname of the failed instances so that
 
 ```failed_enablement_process.2015-07-13_15-44-56.txt ```
 
-```./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f rightscale_r10/failed_enablement_process.2015-07-13_15-44-56.txt -d 'AWS Backend Workload Deployment' -s 'RightLink 10.1.3 Linux Base' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' ```
+```./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f rightscale_r10/failed_enablement_process.2015-07-13_15-44-56.txt -d 'AWS Backend Workload Deployment' -s '/api/server_templates/362953003' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' ```
 
 
 **Note:**
