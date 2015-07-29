@@ -26,8 +26,11 @@ http://docs.rightscale.com/rl/getting_started.html
 http://support.rightscale.com/12-Guides/Dashboard_Users_Guide/Design/ServerTemplates/Concepts/About_ServerTemplates/index.html
 
 ##Prerequisites
-1. Import the base RL10 ST
-[LINK]
+
+1. Import the base RL10 Bulk ST
+[RightLink 10 Bulk ServerTemplate](https://my.rightscale.com/library/server_templates/RightLink-10-1-4-Bulk-Linux-Ba/lineage/55261) 
+
+
 
 ##Download and use
 ```
