@@ -183,7 +183,7 @@ for server in `cat $RS_HOSTS_FILE` ; do
           #Disable server -s is not needed it will used data that's on the server. (-f auto confirm the disablment prompt)
           sudo ./rightlink.disable.sh -k  "\'$RS_API_TOKEN\'" -f
           ";
-          ) | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
+          ) 2> "$RL10_WORKING_DIR/$server-rl.log" | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
       }
     else
     {
@@ -198,7 +198,7 @@ for server in `cat $RS_HOSTS_FILE` ; do
           #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
           sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -r "\'$RS_SERVER_TEMPLATE_HREF\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
           ";
-          ) | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
+          ) 2> "$RL10_WORKING_DIR/$server-rl.log" | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
 
     }
     fi
@@ -241,12 +241,12 @@ TIMESTAMP=`date +"%Y-%m-%d_%H-%M-%S"`
 
 done
 
-# if [ "$HAS_FAILED" == 'true' ]; then
-#
-# echo "#####################################################################################################"
-# echo "A list of failed server can be found here $RL10_WORKING_DIR/failed_$DETECTION_STRING.$TIMESTAMP.txt"
-# echo "A log file for each failed server is included in $RL10_WORKING_DIR"
-# echo "#####################################################################################################"
-# echo "#####################################################################################################"
-# echo " "
-# fi
+if [ "$HAS_FAILED" == 'true' ]; then
+
+echo "#####################################################################################################"
+echo "A list of failed server can be found here $RL10_WORKING_DIR/failed_$DETECTION_STRING.$TIMESTAMP.txt"
+echo "A log file for each failed server is included in $RL10_WORKING_DIR"
+echo "#####################################################################################################"
+echo "#####################################################################################################"
+echo " "
+fi
