@@ -44,7 +44,7 @@ function show_help
 }
 
 
-while getopts ":u:p:k:f:d:n:ms:t:c:hD" opt; do
+while getopts ":u:p:k:f:d:n:ms:t:a:c:hD" opt; do
   case $opt in
     # User to ssh as
     u)
