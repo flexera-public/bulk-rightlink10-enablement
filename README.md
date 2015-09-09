@@ -46,9 +46,13 @@ chmod +x rl_enable.sh
 
   The name of the deployment where you'd like the serves to be placed.
 
--   Server Template Name **(-s)**
+-   Server Template Href **(-s)**
 
-  The name of the ServerTemplate you would like associated with this server.
+  The href of the ServerTemplate you would like associated with this server.
+
+  -   API hostname **(-a)**
+
+    This token can be found by login into the cloud management dashboard at (http://my.rightscale.com) Click on Settings then API Credentials
 
 -   Refresh Token **(-t)**
 
