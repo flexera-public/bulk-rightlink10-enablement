@@ -35,7 +35,7 @@ function show_help
      echo "  -m Pass this flag to enable RightScale managed logins"
      echo "  -s The server template href to associate the enaled server (e.g. /api/server_templates/355861004)"
      echo "  -t The rightscale API refresh token (Settings>API Credentials)"
-     echo "  -a api_hostname       the hostname for the RightScale API"
+     echo "  -a the hostname for the RightScale API (i.e. us-4.rightscale.com)"
      echo "  -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
                 rackspace_next_gen, soft_layer, vscale )"
      echo "  -D disable rightlink requires (-t refresh api token, -u username, -f file with ips/hostnames)"
