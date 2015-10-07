@@ -3,13 +3,13 @@
 #https://github.com/rs-services/bulk-rightlink10-enablement
 #Script to be used to enable running servers.
 #It will execute the rightscale.enable.sh or rightscript.disable.sh script
-#https://rightlink.rightscale.com/rll/10.1.4/rightlink.enable.sh
+#https://rightlink.rightscale.com/rll/$RL_VERSION/rightlink.enable.sh
 #on all listed servers.
 
 
 #local working directory
 RL10_WORKING_DIR='rightscale_rl10'
-
+RL_VERSION='10.2.1'
 
 #use sshpass for passing the password ssh when not using a key
 #MAC OSX brew install https://git.io/sshpass.rb
@@ -189,7 +189,7 @@ for server in `cat $RS_HOSTS_FILE` ; do
           #check if the file already exists, previous attempts
           [[ -f 'rightlink.disable.sh' ]] && rm 'rightlink.disable.sh'
 
-          curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.disable.sh > rightlink.disable.sh && chmod +x rightlink.disable.sh && \
+          curl https://rightlink.rightscale.com/rll/$RL_VERSION/rightlink.disable.sh > rightlink.disable.sh && chmod +x rightlink.disable.sh && \
 
           #Disable server -s is not needed it will used data that's on the server. (-f auto confirm the disablment prompt)
           sudo ./rightlink.disable.sh -k  "\'$RS_API_TOKEN\'" -f
@@ -204,7 +204,7 @@ for server in `cat $RS_HOSTS_FILE` ; do
           #check if the file already exists, previous attempts
           [[ -f 'rightlink.enable.sh' ]] && rm 'rightlink.enable.sh'
 
-          curl https://rightlink.rightscale.com/rll/10.1.4/rightlink.enable.sh > rightlink.enable.sh && chmod +x rightlink.enable.sh && \
+          curl https://rightlink.rightscale.com/rll/$RL_VERSION/rightlink.enable.sh > rightlink.enable.sh && chmod +x rightlink.enable.sh && \
 
           #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
           sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -a "\'$RS_API_ENDPOINT\'" -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -r "\'$RS_SERVER_TEMPLATE_HREF\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
