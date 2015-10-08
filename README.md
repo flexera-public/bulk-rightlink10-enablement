@@ -84,7 +84,7 @@ backend.domain.com
 
 ##Example Enablement
 ``` shell
-./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s '/api/server_templates/362953003' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'
+./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s '/api/server_templates/362953003' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' -a 'us-3.rightscale.com'
 ```
 **Output**
 
