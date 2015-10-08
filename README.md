@@ -93,7 +93,7 @@ backend.domain.com
 
 ##Example Disablement
 ``` shell
-./rl_bulk_enable.sh -u ec2-user -k ~/stash/edwin-aws.pem -D -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -f servers.txt
+./rl_bulk_enable.sh -u ec2-user -k ~/stash/edwin-aws.pem -D -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -f servers.txt -a 'us-3.rightscale.com'
 ```
 
 ##Logging
