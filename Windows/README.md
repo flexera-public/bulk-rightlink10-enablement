@@ -102,6 +102,7 @@ cd C:\Temp
 
 ####Credential Parameter
 The Credential paramter can be set in two ways.
+
 1)	Set a PSCredential in a variable and then pass the variable as the value for the Credential parameter:
 ```
 $admin = get-credential contoso\administrator
