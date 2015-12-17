@@ -99,3 +99,16 @@ cd C:\Temp
 
 .\rightlink.bulk.enable.ps1 -TargetServers (get-content .\servers.txt) -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "DF-Testing" -ServerTemplatename "RightLink 10.2.1 Windows Base v1" -CloudType "amazon"
 ```
+
+####Credential Parameter
+The Credential paramter can be set in two ways.
+1)	Set a PSCredential in a variable and then pass the variable as the value for the Credential parameter:
+```
+$admin = get-credential contoso\administrator
+
+\rightlink.bulk.enable.ps1 -TargetServers "server1,server2 -Credential $admin ...
+```
+2)	Set the value of the Credential parameter to a username, as seen in examples above.
+
+Either method will result in a prompt asking for the password for the specified account:
+![Alt text](/../master/Windows/cred_prompt.png?raw=true "Credential Prompt Example")
