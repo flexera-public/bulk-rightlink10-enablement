@@ -1,23 +1,13 @@
-# Bulk Rightlink 10 Enablement
-Install RightLink 10 on a group of servers. Uses ssh keys or password to access servers.
+# Bulk Rightlink 10 Enablement for Windows
+This script will take unmanaged instances and turn them into RightScale servers.
 
-##Options
-```
-Usage:
-  -u The user used to SSH into the server
-  -p The password used when SSH authenticates with a password
-  -k The ssh private key to use when SSH authenticates with keys
-  -f The file listing the hostnames or ips to bulk enable
-  -d The deployment where enabled servers will the grouped within RightScale
-  -n The name given to the server within RightScale
-  -m Pass this flag to enable RightScale managed logins
-  -s The server template href to associate the enaled server (e.g. /api/server_templates/355861004)
-  -t The rightscale API refresh token (Settings>API Credentials)
-  -a api_hostname the hostname for the RightScale API (us-3.rightscale.com / us-4.rightscale.com)
-  -c cloud (e.g. amazon, azure, cloud_stack, google, open_stack_v2, rackspace_next_gen, soft_layer, vscale)
-  -D disable rightlink requires (-t refresh api token, -u username, -f file with ips/hostnames)"
-  -h show help information (documentation can be found here: https://github.com/rs-services/bulk-rightlink10-enablement)
-```
+##Prerequisites
+- Powershell 3.0 or higher installed on all instances
+- WinRM enabled on all instances
+- The domain credentials used must be a member of the Administrators group on all instances 
+- https://rightlink.rightscale.com must be accessible from the instances
+- Import the [RightLink 10.2.1 Windows Base ServerTemplate](https://my.rightscale.com/library/server_templates/RightLink-10-2-1-Windows-Base/lineage/55964)
+
 ##Warning
 This command automates the enablement of your infrastructure into the RightScale platform.
 It's highly recommended that you read and understand the following documentation prior running this script.
@@ -26,87 +16,100 @@ http://docs.rightscale.com/rl/getting_started.html
 - ServerTemplate documentation
 http://support.rightscale.com/12-Guides/Dashboard_Users_Guide/Design/ServerTemplates/Concepts/About_ServerTemplates/index.html
 
-##Prerequisites
+##Usage
 
-1. Import the base RL10 Bulk ST
-[RightLink 10 Bulk ServerTemplate](https://my.rightscale.com/library/server_templates/RightLink-10-1-4-Bulk-Linux-Ba/lineage/55261)
-
-
-
-##Download and use
+###Parameters
 ```
-wget https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/rl_bulk_enable.sh
-chmod +x rl_enable.sh
-./rl_bulk_enable.sh -h
+    -TargetServers        Comma-separated list of hostnames or IP addresses to Rightlink enable.
+    -Credential           PSCredential to establish PSRemoting Session with Target Servers
+    -RefreshToken         RightScale API refresh token from the dash Settings>API Credentials (required)
+    -DeploymentName       Name of the pre-existing deployment into which to put the server
+    -DeploymentHref       HREF of the deployment to put the server. alternate to the name of the deployment (ex. /api/deployments/123456789)
+    -ServerTemplateName   Name of the ServerTemplate to associate with this instance
+    -ServerTemplateHref   Alternate to ServerTemplateName. HREF of the ServerTemplate to associate with this instance (ex. /api/server_templates/123456789)
+    -ServerName           Name to call the server. Default is current Instance name or $DEFAULT_SERVER_NAME
+    -Inputs               Server inputs in the form of NAME=key:value, separate multiple inputs with commas
+    -CloudType            Cloud type the instance is in. Supported values are amazon, azure, cloud_stack, google, open_stack_v2, rackspace_next_gen, soft_layer, vscale
+    -InstanceHref         RightScale API instance HREF (disables self-detection) (ex. /api/clouds/1/instances/123456ABCDEF)
+    -ApiServer            Hostname for the RightScale API, Default: $DEFAULT_SERVER
+    -Proxy                Have RightLink use HTTP proxy. Will also install RightLink through proxy
+    -NoProxy              A list of hosts to not proxy. List is inherited by scripts/recipes as an environment variable
+    -Username             RightLink Service User Name (default: RightLink)
+    -Password             RightLink Service User Password (default: Randomly generated password)
+    -Help                 Display help
+```  
+  
+###Required Inputs
 ```
+	-RefreshToken
+	-TargetServers
+	-Credential
+	-ServerTemplateName or -ServerTemplateHref
+	-DeploymentName or -DeploymentHref
+    -CloudType or -InstanceHref
+```  
 
-###Requirements
 
--    Deployment Name **(-d)**
+###Notes
+-	Be careful using "-ServerName" parameter when using bulk enablement script, as it will result in multiple servers being renamed to the same value.
+-	When specifiying a ServerTemplate (via Name or Href), be mindful of the required inputs.  If the ServerTemplate has required inputs, those inputs will need to be set via the "-Inputs" parameter.  This is why the RightLink 10.2.1 Windows Base ServerTemplate is recommended.
+-	Do not confuse "-Credential" with the "-Username" & "-Password" parameters.  The "-Credential" parameter is required and is expecting a PSCredential, used to remotely connect to each target server via WinRM.  The "-Username" & "-Password" parameters specify the local service account to run the Righlink Service.
 
-  The name of the deployment where you'd like the serves to be placed.
-
--   Server Template Href **(-s)**
-
-  The href of the ServerTemplate you would like associated with this server.
-
-  -   API hostname **(-a)**
-
-    This token can be found by login into the cloud management dashboard at (http://my.rightscale.com) Click on Settings then API Credentials
-
--   Refresh Token **(-t)**
-
-  This token can be found by login into the cloud management dashboard at (http://my.rightscale.com) Click on Settings then API Credentials
-
--   Cloud **(-c)**
-
-  The cloud we should reference for this server (e.g. amazon, azure, cloud_stack, google, open_stack_v2,
-                rackspace_next_gen, soft_layer, vscale )
-
--   Authentication
-   options
-    - ssh key **(-k)**
-    - password **(-p)**
-    - no key or pass (managed on your computer via ssh-agent)
-
--   List of servers
-    - You will need to provide the script a file with the list of servers to rightlink enable.
-
-    example file called server.txt
-
-```
-10.10.12.1
-10.10.14.3
-database.domain.com
-192.168.8.8
-backend.domain.com
-```
 
 ##Example Enablement
-``` shell
-./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s '/api/server_templates/362953003' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'
+
+####Set Target Servers Inline
 ```
-**Output**
+$URL = 'https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/Windows/rightlink.bulk.enable.ps1'
+$WC = New-Object System.Net.WebClient
+$wc.DownloadFile($URL,"C:\Temp\rightlink.bulk.enable.ps1")
+cd C:\Temp
 
-![Alt text](/../master/output.png?raw=true "Optional Title")
-
-
-##Example Disablement
-``` shell
-./rl_bulk_enable.sh -u ec2-user -k ~/stash/edwin-aws.pem -D -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -f servers.txt
+.\rightlink.bulk.enable.ps1 -TargetServers "server1,server2,10.3.1.89" -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "RL-Testing" -ServerTemplatename "RightLink 10.2.1 Windows Base v1" -CloudType "amazon"
 ```
 
-##Logging
-All logging information is stored in the rightscale_rl10 directory on the computer from where the script is being executed.
-We will keep logs of failed attempts in the following format.
-``` 1.2.3.4--failed-rl.log ```
+####Set Target Servers via AD query
+-	requires the ActiveDirectory PowerShell module to be installed on the server running the Enablement script
+```
+$URL = 'https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/Windows/rightlink.bulk.enable.ps1'
+$WC = New-Object System.Net.WebClient
+$wc.DownloadFile($URL,"C:\Temp\rightlink.bulk.enable.ps1")
+cd C:\Temp
 
-We will also create a file with the ips/hostname of the failed instances so that you easily re-run the script using the new list of host as the server file.
+$servers = get-adcomputer -Filter * -SearchBase "OU=Servers,DC=contoso,DC=com"
 
-```failed_enablement_process.2015-07-13_15-44-56.txt ```
+.\rightlink.bulk.enable.ps1 -TargetServers $servers.DNSHostName -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "DF-Testing" -ServerTemplatename "RightLink 10.2.1 Windows Base v1" -CloudType "amazon"
+```
 
-```./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f rightscale_r10/failed_enablement_process.2015-07-13_15-44-56.txt -d 'AWS Backend Workload Deployment' -s '/api/server_templates/362953003' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon' ```
+####Set Target Servers from Text File
+Example file called servers.txt
 
+```
+SERVER1
+10.33.1.200
+SERVER3.DOMAIN.COM
+SERVER7
+```
 
-**Note:**
-On clouds that support stop/start, instances only currently support starting the instance from either the RightScale Dashboard or through the API.
+```
+$URL = 'https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/Windows/rightlink.bulk.enable.ps1'
+$WC = New-Object System.Net.WebClient
+$wc.DownloadFile($URL,"C:\Temp\rightlink.bulk.enable.ps1")
+cd C:\Temp
+
+.\rightlink.bulk.enable.ps1 -TargetServers (get-content .\servers.txt) -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "DF-Testing" -ServerTemplatename "RightLink 10.2.1 Windows Base v1" -CloudType "amazon"
+```
+
+####Credential Parameter
+The Credential paramter can be set in two ways.
+
+1)	Set a PSCredential in a variable and then pass the variable as the value for the Credential parameter:
+```
+$admin = get-credential contoso\administrator
+
+\rightlink.bulk.enable.ps1 -TargetServers "server1,server2 -Credential $admin ...
+```
+2)	Set the value of the Credential parameter to a username, as seen in examples above.
+
+Either method will result in a prompt asking for the password for the specified account:
+![Alt text](/../master/Windows/cred_prompt.png?raw=true "Credential Prompt Example")
