@@ -4,7 +4,7 @@ This script will take unmanaged instances and turn them into RightScale servers.
 ##Prerequisites
 - Powershell 3.0 or higher installed on all instances
 - WinRM enabled on all instances
-- The domain credentials used must be a member of the Administrators group on all instances 
+- The domain credentials used must be a member of the Administrators group on all instances
 - https://rightlink.rightscale.com must be accessible from the instances
 - Import the [RightLink 10.2.1 Windows Base ServerTemplate](https://my.rightscale.com/library/server_templates/RightLink-10-2-1-Windows-Base/lineage/55964)
 
@@ -38,7 +38,7 @@ http://support.rightscale.com/12-Guides/Dashboard_Users_Guide/Design/ServerTempl
     -Password             RightLink Service User Password (default: Randomly generated password)
     -Help                 Display help
 ```  
-  
+
 ###Required Inputs
 ```
 	-RefreshToken
@@ -60,7 +60,7 @@ http://support.rightscale.com/12-Guides/Dashboard_Users_Guide/Design/ServerTempl
 
 ####Set Target Servers Inline
 ```
-$URL = 'https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/Windows/rightlink.bulk.enable.ps1'
+$URL = 'https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/windows/rightlink.bulk.enable.ps1'
 $WC = New-Object System.Net.WebClient
 $wc.DownloadFile($URL,"C:\Temp\rightlink.bulk.enable.ps1")
 cd C:\Temp
@@ -71,7 +71,7 @@ cd C:\Temp
 ####Set Target Servers via AD query
 -	requires the ActiveDirectory PowerShell module to be installed on the server running the Enablement script
 ```
-$URL = 'https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/Windows/rightlink.bulk.enable.ps1'
+$URL = 'https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/windows/rightlink.bulk.enable.ps1'
 $WC = New-Object System.Net.WebClient
 $wc.DownloadFile($URL,"C:\Temp\rightlink.bulk.enable.ps1")
 cd C:\Temp
@@ -92,7 +92,7 @@ SERVER7
 ```
 
 ```
-$URL = 'https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/Windows/rightlink.bulk.enable.ps1'
+$URL = 'https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/windows/rightlink.bulk.enable.ps1'
 $WC = New-Object System.Net.WebClient
 $wc.DownloadFile($URL,"C:\Temp\rightlink.bulk.enable.ps1")
 cd C:\Temp
