@@ -112,4 +112,4 @@ $admin = get-credential contoso\administrator
 2)	Set the value of the Credential parameter to a username, as seen in examples above.
 
 Either method will result in a prompt asking for the password for the specified account:
-![Alt text](/../master/Windows/cred_prompt.png?raw=true "Credential Prompt Example")
+![Alt text](/../Windows/cred_prompt.png?raw=true "Credential Prompt Example")
