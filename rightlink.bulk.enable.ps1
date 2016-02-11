@@ -231,7 +231,7 @@ out IntPtr phToken
     $LOG_DIR             = "$RIGHTLINK_DIR\Logs"
     $INSTALL_LOG_FILE    = "$LOG_DIR\install.log"
     $RSC                 = "$RIGHTLINK_DIR\rsc.exe"
-    $RIGHTLINK_ZIP_URL   = "https://rightlink.rightscale.com/rll/10.2.1/rightlink.zip"
+    $RIGHTLINK_ZIP_URL   = "https://rightlink.rightscale.com/rll/10/rightlink.zip"
     $DEFAULT_SERVER      = "my.rightscale.com"
     $DEFAULT_SERVER_NAME = "RightLink Enabled #$pid"
 
@@ -824,7 +824,7 @@ Foreach ($targetServer in $ServersArr) {
         $proxy = $Using:proxy
         $noProxy = $Using:noProxy
         $Username = $Using:Username
-        $Password = $Using:Password 
+        $Password = $Using:Password
         Invoke-Expression -Command $Using:ScriptBlock
     }
     Remove-PSSession -Session $session

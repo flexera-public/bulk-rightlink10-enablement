@@ -6,7 +6,7 @@ This script will take unmanaged instances and turn them into RightScale servers.
 - WinRM enabled on all instances
 - The domain credentials used must be a member of the Administrators group on all instances
 - https://rightlink.rightscale.com must be accessible from the instances
-- Import the [RightLink 10.2.1 Windows Base ServerTemplate](https://my.rightscale.com/library/server_templates/RightLink-10-2-1-Windows-Base/lineage/55964)
+- Import the [RightLink 10.3.0 Windows Base ServerTemplate](https://my.rightscale.com/library/server_templates/RightLink-10-3-0-Windows-Base/lineage/55964)
 
 ##Warning
 This command automates the enablement of your infrastructure into the RightScale platform.
