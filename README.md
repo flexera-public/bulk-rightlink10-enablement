@@ -52,7 +52,7 @@ http://support.rightscale.com/12-Guides/Dashboard_Users_Guide/Design/ServerTempl
 
 ###Notes
 -	Be careful using "-ServerName" parameter when using bulk enablement script, as it will result in multiple servers being renamed to the same value.
--	When specifiying a ServerTemplate (via Name or Href), be mindful of the required inputs.  If the ServerTemplate has required inputs, those inputs will need to be set via the "-Inputs" parameter.  This is why the RightLink 10.3.0 Windows Base ServerTemplate is recommended.
+-	When specifiying a ServerTemplate (via Name or Href), be mindful of the required inputs.  If the ServerTemplate has required inputs, those inputs will need to be set via the "-Inputs" parameter.  This is why the RightLink 10.2.1 Windows Base ServerTemplate is recommended.
 -	Do not confuse "-Credential" with the "-Username" & "-Password" parameters.  The "-Credential" parameter is required and is expecting a PSCredential, used to remotely connect to each target server via WinRM.  The "-Username" & "-Password" parameters specify the local service account to run the Righlink Service.
 
 
@@ -65,7 +65,7 @@ $WC = New-Object System.Net.WebClient
 $wc.DownloadFile($URL,"C:\Temp\rightlink.bulk.enable.ps1")
 cd C:\Temp
 
-.\rightlink.bulk.enable.ps1 -TargetServers "server1,server2,10.3.1.89" -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "RL-Testing" -ServerTemplatename "RightLink 10.3.0 Windows Base" -CloudType "amazon"
+.\rightlink.bulk.enable.ps1 -TargetServers "server1,server2,10.3.1.89" -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "RL-Testing" -ServerTemplatename "RightLink 10.2.1 Windows Base v1" -CloudType "amazon"
 ```
 
 ####Set Target Servers via AD query
@@ -78,7 +78,7 @@ cd C:\Temp
 
 $servers = get-adcomputer -Filter * -SearchBase "OU=Servers,DC=contoso,DC=com"
 
-.\rightlink.bulk.enable.ps1 -TargetServers $servers.DNSHostName -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "DF-Testing" -ServerTemplatename "RightLink 10.3.0 Windows Base" -CloudType "amazon"
+.\rightlink.bulk.enable.ps1 -TargetServers $servers.DNSHostName -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "DF-Testing" -ServerTemplatename "RightLink 10.2.1 Windows Base v1" -CloudType "amazon"
 ```
 
 ####Set Target Servers from Text File
@@ -97,7 +97,7 @@ $WC = New-Object System.Net.WebClient
 $wc.DownloadFile($URL,"C:\Temp\rightlink.bulk.enable.ps1")
 cd C:\Temp
 
-.\rightlink.bulk.enable.ps1 -TargetServers (get-content .\servers.txt) -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "DF-Testing" -ServerTemplatename "RightLink 10.3.0 Windows Base" -CloudType "amazon"
+.\rightlink.bulk.enable.ps1 -TargetServers (get-content .\servers.txt) -Credential contoso\administrator -RefreshToken "bfae...7695" -DeploymentName "DF-Testing" -ServerTemplatename "RightLink 10.2.1 Windows Base v1" -CloudType "amazon"
 ```
 
 ####Credential Parameter
