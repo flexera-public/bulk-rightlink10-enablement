@@ -140,7 +140,7 @@ Foreach ($targetServer in $ServersArr) {
         $Username = $Using:Username
         $Password = $Using:Password
         #$arguments = $Using:arguments
-        Invoke-Expression ""$Using:ScriptBlock $arguments"
+        Invoke-Expression "$Using:ScriptBlock $arguments"
     }
     Remove-PSSession -Session $session
 
