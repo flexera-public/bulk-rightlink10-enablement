@@ -88,22 +88,22 @@ function GetHelp
 [System.Management.Automation.ScriptBlock]$ScriptBlock = {
     $wc = new-object system.net.WebClient
     $wc.DownloadFile("https://rightlink.rightscale.com/rll/10/rightlink.enable.ps1","$pwd\rightlink.enable.ps1")
-    $arguments = @()
-    $arguments += "-refreshToken $refreshToken"
-    $arguments += "-CloudType $CloudType"
-    if ($ServerTemplateName) { $arguments += "-ServerTemplateName $ServerTemplateName" }
-    if ($ServerTemplateHref) { $arguments += "-ServerTemplateHref $ServerTemplateHref" }
-    if ($DeploymentName) { $arguments += "-DeploymentName $deploymentName" }
-    if ($deploymentHref) { $arguments += "-deploymentHref $deploymentHref" }
-    if ($ServerName) { $arguments += "-ServerName $ServerName" }
-    if ($inputs) { $arguments += "-inputs $inputs" }
-    if ($apiServer) { $arguments += "-apiServer $ApiServer" }
-    if ($proxy) { $arugments += "-proxy" }
-    if ($NoProxy) { $arguments += "-NoProxy $NoProxy" }
+    $arguments = "-refreshToken $refreshToken"
+    $arguments += " -CloudType $CloudType"
+    if ($ServerTemplateName) { $arguments += " -ServerTemplateName $ServerTemplateName" }
+    if ($ServerTemplateHref) { $arguments += " -ServerTemplateHref $ServerTemplateHref" }
+    if ($DeploymentName) { $arguments += " -DeploymentName $deploymentName" }
+    if ($deploymentHref) { $arguments += " -deploymentHref $deploymentHref" }
+    if ($ServerName) { $arguments += " -ServerName $ServerName" }
+    if ($inputs) { $arguments += " -inputs $inputs" }
+    if ($apiServer) { $arguments += " -apiServer $ApiServer" }
+    if ($proxy) { $arugments += " -proxy" }
+    if ($NoProxy) { $arguments += " -NoProxy $NoProxy" }
     if ($username -and $password) {
-        $arguments += "-username $username"
-        $arugments += "-password $password"
+        $arguments += " -username $username"
+        $arguments += " -password $password"
     }
+    Powershell -ExecutionPolicy Unrestricted -File rightlink.enable.ps1 $arguments
 
 } #end ScriptBlock
 
@@ -140,7 +140,7 @@ Foreach ($targetServer in $ServersArr) {
         $Username = $Using:Username
         $Password = $Using:Password
         #$arguments = $Using:arguments
-        Invoke-Expression "$Using:ScriptBlock $arguments"
+        Invoke-Expression -command $Using:ScriptBlock
     }
     Remove-PSSession -Session $session
 
