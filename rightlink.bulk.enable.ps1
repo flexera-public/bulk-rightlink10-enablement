@@ -111,26 +111,26 @@ Foreach ($targetServer in $ServersArr) {
     $Session = Get-PSSession -ComputerName $targetServer -Credential $Credential
     Invoke-Command -Session $session -ScriptBlock {
         Set-ExecutionPolicy Bypass -Scope Process
-        $arguments = "-refreshToken $Using:refreshToken"
-        $arguments += " -CloudType $Using:CloudType"
-        if ($Using:ServerTemplateName) { $arguments += " -ServerTemplateName $Using:ServerTemplateName" }
-        if ($Using:ServerTemplateHref) { $arguments += " -ServerTemplateHref $Using:ServerTemplateHref" }
-        if ($Using:DeploymentName) { $arguments += " -DeploymentName $Using:deploymentName" }
-        if ($Using:deploymentHref) { $arguments += " -deploymentHref $Using:deploymentHref" }
-        if ($Using:ServerName) { $arguments += " -ServerName $Using:ServerName" }
-        if ($Using:inputs) { $arguments += " -inputs $Using:inputs" }
-        if ($Using:apiServer) { $arguments += " -apiServer $Using:ApiServer" }
+        $arguments = "-refreshToken `"$Using:refreshToken`""
+        $arguments += " -CloudType `"$Using:CloudType`""
+        if ($Using:ServerTemplateName) { $arguments += " -ServerTemplateName `"$Using:ServerTemplateName`"" }
+        if ($Using:ServerTemplateHref) { $arguments += " -ServerTemplateHref `"$Using:ServerTemplateHref`"" }
+        if ($Using:DeploymentName) { $arguments += " -DeploymentName `"$Using:deploymentName`"" }
+        if ($Using:deploymentHref) { $arguments += " -deploymentHref `"$Using:deploymentHref`"" }
+        if ($Using:ServerName) { $arguments += " -ServerName `"$Using:ServerName`"" }
+        if ($Using:inputs) { $arguments += " -inputs `"$Using:inputs`"" }
+        if ($Using:apiServer) { $arguments += " -apiServer `"$Using:ApiServer`"" }
         if ($Using:proxy) { $arugments += " -proxy" }
-        if ($Using:NoProxy) { $arguments += " -NoProxy $Using:NoProxy" }
-        if ($Using:username -and $Using:password) {
-            $arguments += " -username $Using:username"
-            $arguments += " -password $Using:password"
+        if ($Using:NoProxy) { $arguments += " -NoProxy `"$Using:NoProxy`"" }
+        if ($Using:username -and `"$Using:password`") {
+            $arguments += " -username `"$Using:username`""
+            $arguments += " -password `"$Using:password`""
         }
         $wc = new-object system.net.WebClient
         $wc.DownloadFile("https://rightlink.rightscale.com/rll/10/rightlink.enable.ps1","$pwd\rightlink.enable.ps1")
         Powershell -ExecutionPolicy Unrestricted -File rightlink.enable.ps1 $arguments
         #Invoke-Expression -command $Using:ScriptBlock
     }
-    Remove-PSSession -Session $session
+    #Remove-PSSession -Session $session
 
 }
