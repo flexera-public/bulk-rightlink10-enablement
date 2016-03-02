@@ -122,7 +122,7 @@ Foreach ($targetServer in $ServersArr) {
         if ($Using:apiServer) { $arguments += " -apiServer `"$Using:ApiServer`"" }
         if ($Using:proxy) { $arugments += " -proxy" }
         if ($Using:NoProxy) { $arguments += " -NoProxy `"$Using:NoProxy`"" }
-        if ($Using:username -and `"$Using:password`") {
+        if ($Using:username -and $Using:password) {
             $arguments += " -username `"$Using:username`""
             $arguments += " -password `"$Using:password`""
         }
