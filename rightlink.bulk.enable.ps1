@@ -106,7 +106,8 @@ if ($AllSessions) { $AllSessions | foreach { Remove-PSSession -Session $_ } }
 
 Foreach ($targetServer in $ServersArr) {
     $session = $null
-    New-PSSession -ComputerName $targetServer -Credential $Credential
+    $so = New-PSSessionOption -IdleTimeout 600000
+    New-PSSession -ComputerName $targetServer -Credential $Credential -SessionOption $so
     $Session = Get-PSSession -ComputerName $targetServer -Credential $Credential
     Invoke-Command -Session $session -ScriptBlock {
         Set-ExecutionPolicy Bypass -Scope Process
