@@ -87,6 +87,9 @@ function GetHelp
 
 [System.Management.Automation.ScriptBlock]$ScriptBlock = {
 
+
+
+
 } #end ScriptBlock
 
 if ($targetServers.GetType().Name -eq "Object[]") { $ServersArr = $targetServers }
@@ -107,35 +110,20 @@ Foreach ($targetServer in $ServersArr) {
     $Session = Get-PSSession -ComputerName $targetServer -Credential $Credential
     Invoke-Command -Session $session -ScriptBlock {
         Set-ExecutionPolicy Bypass -Scope Process
-        $refreshToken = $Using:refreshToken
-        $deploymentName = $Using:deploymentName
-        $deploymentHref = $Using:deploymentHref
-        $serverTemplateName = $Using:serverTemplateName
-        $serverTemplateHref = $Using:serverTemplateHref
-        $serverName = $Using:serverName
-        $inputs = $Using:inputs
-        $cloudType = $Using:cloudType
-        $instanceHref = $Using:instanceHref
-        $apiServer = $Using:apiServer
-        $proxy = $Using:proxy
-        $noProxy = $Using:noProxy
-        $Username = $Using:Username
-        $Password = $Using:Password
-        #$arguments = $Using:arguments
-        $arguments = "-refreshToken $refreshToken"
-        $arguments += " -CloudType $CloudType"
-        if ($ServerTemplateName) { $arguments += " -ServerTemplateName $ServerTemplateName" }
-        if ($ServerTemplateHref) { $arguments += " -ServerTemplateHref $ServerTemplateHref" }
-        if ($DeploymentName) { $arguments += " -DeploymentName $deploymentName" }
-        if ($deploymentHref) { $arguments += " -deploymentHref $deploymentHref" }
-        if ($ServerName) { $arguments += " -ServerName $ServerName" }
-        if ($inputs) { $arguments += " -inputs $inputs" }
-        if ($apiServer) { $arguments += " -apiServer $ApiServer" }
-        if ($proxy) { $arugments += " -proxy" }
-        if ($NoProxy) { $arguments += " -NoProxy $NoProxy" }
-        if ($username -and $password) {
-            $arguments += " -username $username"
-            $arguments += " -password $password"
+        $arguments = "-refreshToken $Using:refreshToken"
+        $arguments += " -CloudType $Using:CloudType"
+        if ($Using:ServerTemplateName) { $arguments += " -ServerTemplateName $Using:ServerTemplateName" }
+        if ($Using:ServerTemplateHref) { $arguments += " -ServerTemplateHref $Using:ServerTemplateHref" }
+        if ($Using:DeploymentName) { $arguments += " -DeploymentName $Using:deploymentName" }
+        if ($Using:deploymentHref) { $arguments += " -deploymentHref $Using:deploymentHref" }
+        if ($Using:ServerName) { $arguments += " -ServerName $Using:ServerName" }
+        if ($Using:inputs) { $arguments += " -inputs $Using:inputs" }
+        if ($Using:apiServer) { $arguments += " -apiServer $Using:ApiServer" }
+        if ($Using:proxy) { $arugments += " -proxy" }
+        if ($Using:NoProxy) { $arguments += " -NoProxy $Using:NoProxy" }
+        if ($Using:username -and $Using:password) {
+            $arguments += " -username $Using:username"
+            $arguments += " -password $Using:password"
         }
         $wc = new-object system.net.WebClient
         $wc.DownloadFile("https://rightlink.rightscale.com/rll/10/rightlink.enable.ps1","$pwd\rightlink.enable.ps1")
