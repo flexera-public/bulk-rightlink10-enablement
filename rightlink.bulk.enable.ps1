@@ -39,8 +39,12 @@ Param(
   [string]$inputs,
   [alias('c')]
   [string]$cloudType,
+  [alias('f')]
+  [string]$cloudName,
   [alias('i')]
   [string]$instanceHref,
+  [alias('s')]
+  [string]$instanceType,
   [alias('a')]
   [string]$apiServer,
   [alias('x')]
@@ -68,8 +72,10 @@ function GetHelp
   Write-Host "  -ServerTemplateHref   Alternate to ServerTemplateName. HREF of the ServerTemplate to associate with this instance (ex. /api/server_templates/123456789)"
   Write-Host "  -ServerName           Name to call the server. Default is current Instance name or $DEFAULT_SERVER_NAME"
   Write-Host "  -Inputs               Server inputs in the form of NAME=key:value, separate multiple inputs with commas"
-  Write-Host "  -CloudType            Cloud type the instance is in. Supported values are amazon, azure, cloud_stack, google, open_stack_v2, rackspace_next_gen, soft_layer, vscale"
+  Write-Host "  -CloudType            Cloud type the instance is in. Supported values are amazon, azure, cloud_stack, google, open_stack_v2, rackspace_next_gen, soft_layer, vscale, uca"
+  Write-Host "  -CloudName            The name of the cloud the instance is located"
   Write-Host "  -InstanceHref         RightScale API instance HREF (disables self-detection) (ex. /api/clouds/1/instances/123456ABCDEF)"
+  Write-Host "  -InstanceType         The name of the instances type (for UCA clouds only), Default: $DEFAULT_INSTANCE_TYPE"
   Write-Host "  -ApiServer            Hostname for the RightScale API, Default: $DEFAULT_SERVER"
   Write-Host "  -Proxy                Have RightLink use HTTP proxy. Will also install RightLink through proxy"
   Write-Host "  -NoProxy              A list of hosts to not proxy. List is inherited by scripts/recipes as an environment variable"
@@ -82,7 +88,7 @@ function GetHelp
   Write-Host "                 -Credential"
   Write-Host "                 -ServerTemplateName or -ServerTemplateHref"
   Write-Host "                 -DeploymentName or -DeploymentHref"
-  Write-Host "                 -CloudType or -InstanceHref"
+  Write-Host "                 -CloudType or -InstanceHref or -CloudName"
   Write-Host ""
 }
 
@@ -231,7 +237,7 @@ out IntPtr phToken
   $LOG_DIR               = "$RIGHTLINK_DIR\Logs"
   $INSTALL_LOG_FILE      = "$LOG_DIR\install.log"
   $RSC                   = "$RIGHTLINK_DIR\rsc.exe"
-  $RIGHTLINK_ZIP_URL     = "https://rightlink.rightscale.com/rll/10.3.0/rightlink.zip"
+  $RIGHTLINK_ZIP_URL     = "https://rightlink.rightscale.com/rll/10.4.0/rightlink.zip"
   $DEFAULT_SERVER        = "my.rightscale.com"
   $DEFAULT_SERVER_NAME   = "RightLink Enabled #$pid"
   $DEFAULT_INSTANCE_TYPE = "auto"
@@ -431,7 +437,7 @@ out IntPtr phToken
     } elseif ($cloudType -eq 'cloud_stack') {
       LogWrite "Retrieving Cloudstack metadata ... " $True
       $dhcp = ipconfig /all | find /i "DHCP Server"
-      $dhcp -match ": (.*)"
+      $dhcp -match ": (.*)" | Out-Null
       $ip = $matches[1]
       $wc = New-Object System.Net.WebClient
       $instanceId = $wc.DownloadString("http://$ip/latest/meta-data/instance-id")
@@ -440,7 +446,7 @@ out IntPtr phToken
       $wc = New-Object System.Net.WebClient
       $wc.Headers.add('Metadata-Flavor','Google')
       $hostname = $wc.DownloadString("http://metadata.google.internal/computeMetadata/v1/instance/hostname")
-      $hostname -match "[^.]+"
+      $hostname -match "[^.]+" | Out-Null
       $hostname = $matches[0]
       $project = $wc.DownloadString("http://metadata.google.internal/computeMetadata/v1/project/project-id")
       $instanceId = "projects/$project/instances/$hostname"
@@ -592,10 +598,24 @@ out IntPtr phToken
         foreach ($cloudHref in $cloudHrefs) {
           LogWrite "Finding instance $instanceId in $cloudHref ... " $True
           # Find our instance
-          $instanceHref = (& $RSC --key $refreshToken --host $apiServer --x1 ':has(.rel:val(\"self\")).href' `
+          if ( $resourceLabel -match "ip_address" ) {
+            $instanceList = (& $RSC --key $refreshToken --host $apiServer --xm ':has(.rel:val(\"self\")).href' `
                           cm15 index "$cloudHref/instances" "filter[]=$resourceLabel==$instanceId" `
                           "filter[]=state<>terminated" "filter[]=state<>decommissioning" "filter[]=state<>terminating" `
                           "filter[]=state<>stopping" "filter[]=state<>provisioned" "filter[]=state<>failed" 2> $null)
+            foreach ($instance in $instanceList) {
+              $checkIp = (& $RSC --key $refreshToken --host $apiServer --x1 ".$($resourceLabel)es" cm15 show `
+                       $instance ) -replace '"|\[|\]',''
+              if ( $checkIp -eq $instanceId ) {
+                $instanceHref = $instance
+              }
+            }
+          } else {
+            $instanceHref = (& $RSC --key $refreshToken --host $apiServer --x1 ':has(.rel:val(\"self\")).href' `
+                          cm15 index "$cloudHref/instances" "filter[]=$resourceLabel==$instanceId" `
+                          "filter[]=state<>terminated" "filter[]=state<>decommissioning" "filter[]=state<>terminating" `
+                          "filter[]=state<>stopping" "filter[]=state<>provisioned" "filter[]=state<>failed" 2> $null)
+          }
           if ($instanceHref) {
             LogWrite "instanceHref = $instanceHref"
             break
@@ -911,7 +931,9 @@ Foreach ($targetServer in $ServersArr) {
         $serverName = $Using:serverName
         $inputs = $Using:inputs
         $cloudType = $Using:cloudType
+        $cloudName = $Using:cloudName
         $instanceHref = $Using:instanceHref
+        $instanceType = $Using:instanceType
         $apiServer = $Using:apiServer
         $proxy = $Using:proxy
         $noProxy = $Using:noProxy
