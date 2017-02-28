@@ -18,6 +18,7 @@
 # will attempt to run RightLink as that user. If no Username/Password is supplied,
 # a local Administrator called "RightLink" with a randomly generated password will be created
 # for RightLink to run under.
+
 Param(
   $targetServers,
   [Parameter(Mandatory=$true)]
@@ -98,56 +99,56 @@ Foreach ($targetServer in $ServersArr) {
         Set-ExecutionPolicy Bypass -Scope Process
         $argslist = $null
         if ($Using:refreshToken) {
-          $argslist = $argslist + "-refreshToken $Using:refreshToken"
+          $argslist += "-refreshToken $Using:refreshToken"
         }
         if ($Using:deploymentName) {
-          $argslist = $argslist + " -deploymentName $Using:deploymentName"
+          $argslist += " -deploymentName '$Using:deploymentName'"
         }
         if ($Using:deploymentHref) {
-          $argslist = $argslist + " -deploymentHref $Using:deploymentHref"
+          $argslist += " -deploymentHref $Using:deploymentHref"
         }
         if ($Using:serverTemplateName) {
-          $argslist = $argslist + " -serverTemplateName $Using:serverTemplateName"
+          $argslist += " -serverTemplateName '$Using:serverTemplateName'"
         }
         if ($Using:serverTemplateHref) {
-          $argslist = $argslist + " -serverTemplateHref $Using:serverTemplateHref"
+          $argslist += " -serverTemplateHref $Using:serverTemplateHref"
         }
         if ($Using:serverName) {
-          $argslist = $argslist + " -serverName $Using:serverName"
+          $argslist += " -serverName $Using:serverName"
         }
         if ($Using:inputs) {
-          $argslist = $argslist + " -inputs $Using:inputs"
+          $argslist += " -inputs $Using:inputs"
         }
         if ($Using:cloudType) {
-          $argslist = $argslist + " -cloudType $Using:cloudType"
+          $argslist += " -cloudType $Using:cloudType"
         }
         if ($Using:cloudName) {
-          $argslist = $argslist + " -cloudName $Using:cloudName"
+          $argslist += " -cloudName $Using:cloudName"
         }
         if ($Using:instanceHref) {
-          $argslist = $argslist + " -instanceHref $Using:instanceHref"
+          $argslist += " -instanceHref $Using:instanceHref"
         }
         if ($Using:instanceType) {
-          $argslist = $argslist + " -instanceType $Using:instanceType"
+          $argslist += " -instanceType $Using:instanceType"
         }
         if ($Using:apiServer) {
-          $argslist = $argslist + " -apiServer $Using:apiServer"
+          $argslist += " -apiServer $Using:apiServer"
         }
         if ($Using:proxy) {
-          $argslist = $argslist + " -proxy $Using:proxy"
+          $argslist += " -proxy $Using:proxy"
         }
         if ($Using:noProxy) {
-          $argslist = $argslist + " -noProxy $Using:noProxy"
+          $argslist += " -noProxy $Using:noProxy"
         }
         if ($Using:Username) {
-          $argslist = $argslist + " -username $Using:Username"
+          $argslist += " -username $Using:Username"
         }
         if ($Using:Password) {
-          $argslist = $argslist + " -password $Using:password"
+          $argslist += " -password $Using:password"
         }
         
         $wc = New-Object System.Net.WebClient
-        $wc.DownloadFile("https://rightlink.rightscale.com/rll/10/rightlink.enable.ps1", "$pwd\rightlink.enable.ps1")
+        $wc.DownloadFile("https://rightlink.rightscale.com/rll/10.6.0/rightlink.enable.ps1", "$pwd\rightlink.enable.ps1")
         Invoke-Expression "$pwd\rightlink.enable.ps1 $argslist"
     }
     Remove-PSSession -Session $session
