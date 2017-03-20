@@ -24,6 +24,7 @@ Param(
   [Parameter(Mandatory=$true)]
   [System.Management.Automation.CredentialAttribute()]
   $Credential,
+  $RLversion,
   [alias('k')][string]$refreshToken,
   [alias('d')][string]$deploymentName,
   [alias('e')][string]$deploymentHref,
@@ -49,6 +50,7 @@ function GetHelp
   Write-Host "Parameters:"
   Write-Host "  -TargetServers        Comma-separated list of hostnames or IP addresses to RL-enable."
   Write-Host "  -Credential           PSCredential to establish PSRemoting Session with Target Servers"
+  Write-Host "  -RLversion            RightLink version to use when enabling.  ie. 10.6.0 (will default to latest if unset)"
   Write-Host "  -RefreshToken         RightScale API refresh token from the dash Settings>API Credentials (required)"
   Write-Host "  -DeploymentName       Name of the pre-existing deployment into which to put the server"
   Write-Host "  -DeploymentHref       HREF of the deployment to put the server. alternate to the name of the deployment (ex. /api/deployments/123456789)"
@@ -146,9 +148,14 @@ Foreach ($targetServer in $ServersArr) {
         if ($Using:Password) {
           $argslist += " -password $Using:password"
         }
+        if ($Using:RLversion) {
+          $RLversion = $Using:RLversion
+        } else {
+          $RLversion = "10"
+        }
         
         $wc = New-Object System.Net.WebClient
-        $wc.DownloadFile("https://rightlink.rightscale.com/rll/10.6.0/rightlink.enable.ps1", "$pwd\rightlink.enable.ps1")
+        $wc.DownloadFile("https://rightlink.rightscale.com/rll/$RLversion/rightlink.enable.ps1", "$pwd\rightlink.enable.ps1")
         Invoke-Expression "$pwd\rightlink.enable.ps1 $argslist"
     }
     Remove-PSSession -Session $session
