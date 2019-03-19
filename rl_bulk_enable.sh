@@ -9,7 +9,7 @@
 
 #local working directory
 RL10_WORKING_DIR='rightscale_rl10'
-RL_VERSION='10.2.1'
+RL_VERSION='10'  # use latest RL10 version; if you want to use a specific version change accordingly (e.g. 10.6.0)
 
 #use sshpass for passing the password ssh when not using a key
 #MAC OSX brew install https://git.io/sshpass.rb
