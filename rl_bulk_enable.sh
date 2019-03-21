@@ -131,7 +131,9 @@ fi
 
 #check for server name option
 if [ -z "$RS_SERVER_NAME" ]; then
-  RS_SERVER_NAME="RightLink Enabled"
+  RS_SERVER_NAME=""
+else
+  RS_SERVER_NAME="-n \'$RS_SERVER_NAME\'"
 fi
 
 
@@ -207,7 +209,7 @@ for server in `cat $RS_HOSTS_FILE` ; do
           curl https://rightlink.rightscale.com/rll/$RL_VERSION/rightlink.enable.sh > rightlink.enable.sh && chmod +x rightlink.enable.sh && \
 
           #RS_MANAGED_LOGIN is set to "-l" if the -m flag is used.
-          sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -a "\'$RS_API_ENDPOINT\'" -n "\'$RS_SERVER_NAME $RANDOM\'" -k  "\'$RS_API_TOKEN\'" -r "\'$RS_SERVER_TEMPLATE_HREF\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
+          sudo ./rightlink.enable.sh $RS_MANAGED_LOGIN -a "\'$RS_API_ENDPOINT\'" "$RS_SERVER_NAME" -k  "\'$RS_API_TOKEN\'" -r "\'$RS_SERVER_TEMPLATE_HREF\'"  -c "\'$RS_CLOUD\'"  -d "\'$RS_DEPLOYMENT\'"
           ";
           ) 2> "$RL10_WORKING_DIR/$server-rl.log" | sed -e "s/^/$server:/" >> "$RL10_WORKING_DIR/$server-rl.log" &
 
