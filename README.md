@@ -1,7 +1,8 @@
 # Bulk Rightlink 10 Enablement
 Install RightLink 10 on a group of servers. Uses ssh keys or password to access servers.
 
-##Options
+## Options
+
 ```
 Usage:
   -u The user used to SSH into the server
@@ -18,7 +19,7 @@ Usage:
   -D disable rightlink requires (-t refresh api token, -u username, -f file with ips/hostnames)"
   -h show help information (documentation can be found here: https://github.com/rs-services/bulk-rightlink10-enablement)
 ```
-##Warning
+## Warning
 This command automates the enablement of your infrastructure into the RightScale platform.
 It's highly recommended that you read and understand the following documentation prior running this script.
 - RL10 documentation
@@ -26,21 +27,21 @@ http://docs.rightscale.com/rl/getting_started.html
 - ServerTemplate documentation
 http://support.rightscale.com/12-Guides/Dashboard_Users_Guide/Design/ServerTemplates/Concepts/About_ServerTemplates/index.html
 
-##Prerequisites
+## Prerequisites
 
 1. Import the base RL10 Bulk ST
 [RightLink 10 Bulk ServerTemplate](https://my.rightscale.com/library/server_templates/RightLink-10-1-4-Bulk-Linux-Ba/lineage/55261)
 
 
 
-##Download and use
+## Download and use
 ```
 wget https://raw.githubusercontent.com/rs-services/bulk-rightlink10-enablement/master/rl_bulk_enable.sh
 chmod +x rl_enable.sh
 ./rl_bulk_enable.sh -h
 ```
 
-###Requirements
+### Requirements
 
 -    Deployment Name **(-d)**
 
@@ -82,7 +83,7 @@ database.domain.com
 backend.domain.com
 ```
 
-##Example Enablement
+## Example Enablement
 ``` shell
 ./rl_bulk_enable.sh -u ec2-user -k ~/edwin-aws.pem -f servers.txt -d 'AWS Backend Workload Deployment' -s '/api/server_templates/362953003' -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -c 'amazon'
 ```
@@ -91,12 +92,12 @@ backend.domain.com
 ![Alt text](/../master/output.png?raw=true "Optional Title")
 
 
-##Example Disablement
+## Example Disablement
 ``` shell
 ./rl_bulk_enable.sh -u ec2-user -k ~/stash/edwin-aws.pem -D -t '7bPLUbLfGaQFcSkywVfLpRMt7bPLUbLfGaQFcSkywVfLpRMt' -f servers.txt
 ```
 
-##Logging
+## Logging
 All logging information is stored in the rightscale_rl10 directory on the computer from where the script is being executed.
 We will keep logs of failed attempts in the following format.
 ``` 1.2.3.4--failed-rl.log ```
